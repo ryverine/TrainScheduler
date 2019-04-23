@@ -1,0 +1,158 @@
+
+/*
+https://www.bitdegree.org/learn/bootstrap-colors
+https://getbootstrap.com/docs/4.0/utilities/colors/
+
+bg-light = #f8f9fa 
+other light gray:
+	#f0f2f4
+	#e1e6ea 
+	#d2d9df
+*/
+
+*{
+	font-size: 16px;
+
+}
+
+/*** ELEMENT ***/
+
+thead{
+	background-color: #6c757d;
+	text-align: center;
+	font-size: 20px;
+	font-weight: bold;
+	color: #343a40;
+	border: 2px solid #6c757d;
+}
+
+table{
+	background-color: #f8f9fa;
+}
+
+body{
+	background: url(../images/concrete_seamless.png);
+}
+
+/*** CLASS ***/
+
+.card{
+	margin: 0px 0px 20px 0px;
+	border: 2px solid #343a40;
+}
+
+.card-header{
+	background-color: #343a40;
+	color: #6c757d;
+	font-size: 24px;
+	font-weight: bolder;
+}
+
+.inputLabel{
+	color: #6c757d;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.card-body{
+	background-color: #f8f9fa;
+}
+
+.trainData{
+	color: #343a40;
+	border: 2px solid #6c757d;
+	background-color: white;
+}
+
+.trainData:hover{
+	background-color: #6c757d;
+	font-weight: bold;
+	color: white;
+}
+
+.trainDataHeader{
+	background-color: #6c757d;
+	color: #343a40;
+	border: 2px solid #6c757d;
+}
+
+.inputSpecificationLabel
+{
+	font-weight: normal;
+	font-size: 16px;
+}
+
+.lastTrainDisplay{
+	margin-left: 25px;
+	font-weight: normal;
+	font-size: 18px;
+	color: #343a40;
+}
+
+.textboxInput{
+	border: 2px solid #6c757d;
+	margin: 5px;
+	width: 90%;
+}
+
+/*** ID ***/
+
+#header{
+	margin: 20px 0px 20px 0px;
+	background-color: #6c757d;
+	border: 2px solid #343a40;
+	text-align: center;
+}
+
+#title{
+	color: white;
+	font-weight: bolder;
+	font-size: 32px;
+}
+
+#subTitle{
+	color: #343a40;
+	font-weight: bold;
+	font-size: 20px;
+}
+
+#btn-submit{
+	margin: 10px;
+	color: #6c757d;
+	font-weight: bold;
+	border: 2px solid #6c757d;
+}
+
+#btn-submit:hover{
+	color: white;
+	background-color: #6c757d;
+	border: 2px solid #343a40;
+}
+
+#trainName{
+	border: none;
+}
+
+#trainDestination{
+	border: none;
+}
+
+#trainFrequency{
+	border: none;
+}
+
+#trainArrival{
+	border: none;
+}
+
+#trainMinutes{
+	border: none;
+}
+
+#lastArea{
+		color: #343a40;
+}
+
+#inputArea{
+		color: #343a40;
+}
