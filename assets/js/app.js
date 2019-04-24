@@ -76,6 +76,9 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 
 		console.log("googleSignIn: " + "\n" + signIn);
 
+		console.log("firebase.auth().currentUser: " + "\n" +
+			firebase.auth().currentUser);
+
 	});
 
 	function googleSignIn()
