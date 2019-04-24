@@ -65,7 +65,7 @@ body{
 }
 
 .trainData:hover{
-	background-color: #6c757d;
+	background-color: #343a40; /*#6c757d;*/
 	font-weight: bold;
 	color: white;
 }
@@ -93,6 +93,26 @@ body{
 	border: 2px solid #6c757d;
 	margin: 5px;
 	width: 90%;
+}
+
+
+
+#trainInitalTimeHHInput{
+	width: 50px;
+}
+
+#trainInitalTimeMMInput{
+	width: 50px;
+}
+
+#trainFreqencyInput{
+	width: 100px;
+}
+
+#submitErrorMessage{
+	color: #6c757d;
+	font-weight: bold;
+	margin: auto;
 }
 
 /*** ID ***/
@@ -156,3 +176,28 @@ body{
 #inputArea{
 		color: #343a40;
 }
+
+#signInArea{
+	margin: 25vh auto auto auto;
+	width: 50%;
+}
+
+#btn-googleSignIn{
+	text-align: center;
+	width: 100%;
+	padding: 50px;
+	font-size: 25px;
+	font-weight: bolder;
+	color: #6c757d;
+	border: 5px solid #343a40;
+}
+
+#btn-googleSignIn:hover{
+	background-color: #343a40;
+	color: white;
+	border-color: #6c757d;
+}
+
+/*Dark Gray: #343a40;
+*Gray: #6c757d;
+/
