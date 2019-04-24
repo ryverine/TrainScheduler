@@ -84,6 +84,7 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 	function googleSignIn()
 	{
 		// https://firebase.google.com/docs/reference/js/firebase.auth.GoogleAuthProvider
+		
 		var provider = new firebase.auth.GoogleAuthProvider();
 		firebase.auth().useDeviceLanguage();
 
@@ -95,7 +96,7 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 		{
 			var token = result.credential.accessToken;
 			var user = result.user;
-			console.log("result user: " + user);
+			console.log("result user display name: " + user.displayName);
 		}).catch(function(error)
 		{
 			console.log("Google sign-in error: " + "\n" +  error);
