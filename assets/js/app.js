@@ -70,9 +70,16 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 	// user signs-in with google account
 	$("#btn-googleSignIn").on("click", function()
 	{
-		event.preventDefault();
 		console.log("SIGN IN CLICKED");
 
+		var signIn = googleSignIn();
+
+		console.log("googleSignIn: " + "\n" + signIn);
+
+	});
+
+	function googleSignIn()
+	{
 		var provider = new firebase.auth.GoogleAuthProvider();
 		firebase.auth().useDeviceLanguage();
 
@@ -80,18 +87,25 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 		provider.addScope("email");
 
 		
-		return firebase.auth().signInWithPopup(provider).catch(function(error){
+		return firebase.auth().signInWithPopup(provider).catch(function(error)
+		{
 			console.log("Google sign-in error: " + "\n" +  error);
 		});
 
-	});
+	}
+
+	function googleSignOut()
+	{
+		firebase.auth().signOut();
+	}
+
+	/*
 
 
-	//function signIn(){}
-	//function signOut(){}
+
+	
 
 
-		/*
 
 
 
