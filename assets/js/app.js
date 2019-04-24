@@ -45,6 +45,7 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 
  $(document).ready(function() 
  {
+	var googleUser;
 
 	// Initialize Firebase
 	var config = {	apiKey: "AIzaSyCZt_ec1cn1ETdIsj7mEtNAfrcepQNT4Ng",
@@ -73,9 +74,9 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 		console.log("SIGN IN CLICKED");
 
 		// https://firebase.google.com/docs/reference/js/firebase.User
-		var user = googleSignIn();
+		var nUser = googleSignIn();
 
-		console.log("googleSignIn user email: " + "\n" + user.email);
+		//console.log("googleSignIn user email: " + "\n" + user.email);
 
 
 	});
@@ -100,6 +101,12 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 	{
 		firebase.auth().signOut();
 	}
+
+
+	firebase.auth().onStateChanged(function(user){
+		googleUser = user;
+		console.log("user", googleUser);
+	});
 
 	/*
 
