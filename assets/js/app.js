@@ -85,6 +85,12 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 		});
 
 	});
+
+
+	//function signIn(){}
+	//function signOut(){}
+
+
 		/*
 
 
