@@ -75,7 +75,7 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 		// https://firebase.google.com/docs/reference/js/firebase.User
 		var user = googleSignIn();
 
-		console.log("googleSignIn: " + "\n" + user.displayName);
+		console.log("googleSignIn user email: " + "\n" + user.email);
 
 
 	});
