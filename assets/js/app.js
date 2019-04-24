@@ -83,6 +83,7 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 
 	function googleSignIn()
 	{
+		// https://firebase.google.com/docs/reference/js/firebase.auth.GoogleAuthProvider
 		var provider = new firebase.auth.GoogleAuthProvider();
 		firebase.auth().useDeviceLanguage();
 
@@ -90,7 +91,12 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 		provider.addScope("email");
 
 		// https://firebase.google.com/docs/reference/js/firebase.auth.Auth.html#signinwithpopup
-		return firebase.auth().signInWithPopup(provider).catch(function(error)
+		return firebase.auth().signInWithPopup(provider).then(function(result)
+		{
+			var token = result.credential.accessToken;
+			var user = result.user;
+			console.log("result user: " + user);
+		}).catch(function(error)
 		{
 			console.log("Google sign-in error: " + "\n" +  error);
 		});
@@ -103,10 +109,7 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 	}
 
 
-	firebase.auth().onStateChanged(function(user){
-		googleUser = user;
-		console.log("user", googleUser);
-	});
+
 
 	/*
 
