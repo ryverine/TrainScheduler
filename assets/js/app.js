@@ -72,12 +72,11 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 	{
 		console.log("SIGN IN CLICKED");
 
-		var signIn = googleSignIn();
+		// https://firebase.google.com/docs/reference/js/firebase.User
+		var user = googleSignIn();
 
-		console.log("googleSignIn: " + "\n" + signIn);
+		console.log("googleSignIn: " + "\n" + user.displayName);
 
-		console.log("firebase.auth().currentUser: " + "\n" +
-			firebase.auth().currentUser);
 
 	});
 
@@ -89,7 +88,7 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 		provider.addScope("profile");
 		provider.addScope("email");
 
-		
+		// https://firebase.google.com/docs/reference/js/firebase.auth.Auth.html#signinwithpopup
 		return firebase.auth().signInWithPopup(provider).catch(function(error)
 		{
 			console.log("Google sign-in error: " + "\n" +  error);
