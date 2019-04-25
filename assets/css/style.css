@@ -216,12 +216,14 @@ body{
 }
 
 #profileImageArea{
-	padding 2px;
+	padding: 2px;
 	display: inline-block;
 }
 
 #profileImage{
 	float: right;
+	height: 150px;
+	width: 150px;
 }
 
 #userDataArea{
