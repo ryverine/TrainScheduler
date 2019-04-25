@@ -43,9 +43,16 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 // http://militarytimechart.com/
 
 
- $(document).ready(function() 
- {
-	var googleUser;
+var googleUser;
+
+$(document).ready(function() 
+{
+	console.log("googleUser: " + googleUser);
+	if(googleUser != undefined)
+	{
+		$("#googleDisplayName").text(googleUser.displayName);
+		$("#googleEmail").text(googleUser.email);
+	}
 
 	// Initialize Firebase
 	var config = {	apiKey: "AIzaSyCZt_ec1cn1ETdIsj7mEtNAfrcepQNT4Ng",
@@ -74,10 +81,16 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 		console.log("SIGN IN CLICKED");
 
 		// https://firebase.google.com/docs/reference/js/firebase.User
-		var nUser = googleSignIn();
+		var tmp = googleSignIn();
+
+		console.log("tmp:" + "\n" + tmp);
+
+		if(tmp != null)
+		{
+			window.location = "main.html";
+		}
 
 		//console.log("googleSignIn user email: " + "\n" + user.email);
-
 
 	});
 
@@ -94,9 +107,9 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 		// https://firebase.google.com/docs/reference/js/firebase.auth.Auth.html#signinwithpopup
 		return firebase.auth().signInWithPopup(provider).then(function(result)
 		{
-			var token = result.credential.accessToken;
-			var user = result.user;
-			console.log("result user display name: " + user.displayName);
+			//var token = result.credential.accessToken;
+			googleUser = result.user;
+			console.log("result user display name: " + googleUser.displayName);
 		}).catch(function(error)
 		{
 			console.log("Google sign-in error: " + "\n" +  error);
