@@ -90,11 +90,6 @@ $(document).ready(function()
 
 		console.log("tmp:" + "\n" + tmp);
 
-		if(tmp != null)
-		{
-			window.location = "main.html";
-		}
-
 		//console.log("googleSignIn user email: " + "\n" + user.email);
 
 	});
