@@ -43,10 +43,15 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 // http://militarytimechart.com/
 
 
-var googleUser;
+
 
 $(document).ready(function() 
 {
+	var signInArea = $("#signInArea");
+	var trainSchedulerArea = $("#trainSchedulerArea");
+
+	var googleUser;
+
 	console.log("googleUser: " + googleUser);
 	if(googleUser != undefined)
 	{
@@ -110,6 +115,13 @@ $(document).ready(function()
 			//var token = result.credential.accessToken;
 			googleUser = result.user;
 			console.log("result user display name: " + googleUser.displayName);
+
+			signInArea.hide();
+			trainSchedulerArea.show();
+		
+			$("#googleDisplayName").text(googleUser.displayName);
+			$("#googleEmail").text(googleUser.email);
+		
 		}).catch(function(error)
 		{
 			console.log("Google sign-in error: " + "\n" +  error);
