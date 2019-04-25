@@ -96,6 +96,11 @@ body{
 }
 
 
+/*** ID ***/
+
+#trainSchedulerArea{
+	display: none;
+}
 
 #trainInitalTimeHHInput{
 	width: 50px;
@@ -114,8 +119,6 @@ body{
 	font-weight: bold;
 	margin: auto;
 }
-
-/*** ID ***/
 
 #header{
 	margin: 20px 0px 20px 0px;
