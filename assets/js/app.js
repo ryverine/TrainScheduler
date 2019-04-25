@@ -43,23 +43,17 @@ You'll need to read up on Firebase authentication for this bonus exercise.
 // http://militarytimechart.com/
 
 
-
-
 $(document).ready(function() 
 {
 	var signInArea = $("#signInArea");
 	var trainSchedulerArea = $("#trainSchedulerArea");
 
-	var googleUser;
+	var defaultGoogleUser = {	displayName: "Unknown", 
+								email: "unknown@unknown.unknown", 
+								photoURL: "assets/images/tmpProfileImg.png"};
 
-	console.log("googleUser: " + googleUser);
-	if(googleUser != undefined)
-	{
-		$("#googleDisplayName").text(googleUser.displayName);
-		$("#googleEmail").text(googleUser.email);
-	}
+	var googleUser = defaultGoogleUser;
 
-	// Initialize Firebase
 	var config = {	apiKey: "AIzaSyCZt_ec1cn1ETdIsj7mEtNAfrcepQNT4Ng",
 					authDomain: "train-scheduler-232b7.firebaseapp.com",
 					databaseURL: "https://train-scheduler-232b7.firebaseio.com",
@@ -79,25 +73,21 @@ $(document).ready(function()
 	var trainTableData = $("#trainDataArea");
 
 
-
-	// user signs-in with google account
-	$("#btn-googleSignIn").on("click", function()
+	function updateUserInfo (theUser)
 	{
-		console.log("SIGN IN CLICKED");
+		$("#googleDisplayName").text(theUser.displayName);
+		$("#googleEmail").text(theUser.email);
 
-		// https://firebase.google.com/docs/reference/js/firebase.User
-		var tmp = googleSignIn();
+		var profileImg = $("#profileImage");
+		profileImg.attr("src", theUser.photoURL);
 
-		console.log("tmp:" + "\n" + tmp);
+		$("#profileImageArea").html(profileImg);
+	}
 
-		//console.log("googleSignIn user email: " + "\n" + user.email);
-
-	});
 
 	function googleSignIn()
 	{
 		// https://firebase.google.com/docs/reference/js/firebase.auth.GoogleAuthProvider
-		
 		var provider = new firebase.auth.GoogleAuthProvider();
 		firebase.auth().useDeviceLanguage();
 
@@ -113,9 +103,8 @@ $(document).ready(function()
 
 			signInArea.hide();
 			trainSchedulerArea.show();
-		
-			$("#googleDisplayName").text(googleUser.displayName);
-			$("#googleEmail").text(googleUser.email);
+			$("#userProfileArea").show();
+			updateUserInfo(result.user);
 		
 		}).catch(function(error)
 		{
@@ -124,101 +113,13 @@ $(document).ready(function()
 
 	}
 
+
 	function googleSignOut()
 	{
 		firebase.auth().signOut();
+		updateUserInfo(defaultGoogleUser);
 	}
 
-
-
-
-	/*
-
-
-
-	
-
-
-
-
-
-firebase.auth().signInWithRedirect(provider);
-
-
-firebase.auth().getRedirectResult().then(function(result) {
-  if (result.credential) {
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    var token = result.credential.accessToken;
-    // ...
-  }
-  // The signed-in user info.
-  var user = result.user;
-}).catch(function(error) {
-  // Handle Errors here.
-  var errorCode = error.code;
-  var errorMessage = error.message;
-  // The email of the user's account used.
-  var email = error.email;
-  // The firebase.auth.AuthCredential type that was used.
-  var credential = error.credential;
-  // ...
-});
-		*/
-		
-
-
-
-	// DISPLAY INFO ON LAST TRAIN ADDED
-	// $("#lastTrainName").val().trim();
-	// $("#lastTrainNameDestination").val().trim();
-	// $("#lastTrainStart").val().trim();
-	// $("#lastTrainFreqency").val().trim();
-
-	// SUBMIT BUTTON
-	
-    $("#btn-submit").on("click", function() 
-    {
-        // prevent form from submitting
-        event.preventDefault();
-        console.log("SUBMIT BUTTON CLICKED");
-  		$("#submitErrorMessage").text("");
-
-		trainName_input = $("#trainNameInput").val().trim();
-		trainDestination_input = $("#trainDestinationInput").val().trim();
-		firstTrainTimeHH_input = $("#trainInitalTimeHHInput").val().trim();
-		firstTrainTimeMM_input = $("#trainInitalTimeMMInput").val().trim();
-		trainFrequency_input = $("#trainFreqencyInput").val().trim();
-
-
-		// is this a train that we already have in the database?
-
-		var inputError = validateInput(trainName_input, trainDestination_input , firstTrainTimeHH_input, firstTrainTimeMM_input, trainFrequency_input);
-
-		if(inputError === "")
-		{
-			var startTime = firstTrainTimeHH_input + ":" + firstTrainTimeMM_input;
-
-			// add new object to firebase 
-	        database.ref().push(
-	        {
-	            name: trainName_input,
-	            destination: trainDestination_input,
-	            start: startTime,
-	            frequency: trainFrequency_input
-	        });
-
-			$("#trainNameInput").val("");
-			$("#trainDestinationInput").val("");
-			$("#trainInitalTimeHHInput").val("");
-			$("#trainInitalTimeMMInput").val("");
-			$("#trainFreqencyInput").val("");
-		}
-		else
-		{
-			$("#submitErrorMessage").text(inputError);
-		}
-		
-    });
 
  	function validateInput(name, dest, hh, mm, freq)
  	{
@@ -247,6 +148,121 @@ firebase.auth().getRedirectResult().then(function(result) {
  		}
  	}
 
+
+ 	function findNextArrival(trainStartHH, trainStartMM, trainFrequency)
+ 	{
+ 		// https://momentjs.com/docs/#/get-set/
+ 		// https://www.tutorialspoint.com/momentjs/momentjs_durations.htm
+
+ 		var nextArrival = trainStartHH + ":" + trainStartMM; // HH:mm 24-hour format
+
+ 		var now = moment();
+
+ 		var trainStartTime = moment();
+ 		trainStartTime.hour(trainStartHH);
+ 		trainStartTime.minute(trainStartMM);
+
+ 		// if diff <= 0, next arrival is same as start time
+ 		if(now.diff(trainStartTime) > 0)
+ 		{
+ 			var theDuration = moment.duration(Number.parseInt(trainFrequency), "minutes");
+
+ 			var difference = now.diff(trainStartTime);
+
+ 			var numberOfArrivalsSiceStart = Math.floor(difference/theDuration);  
+
+ 			var millisecondsToNextArrival = (numberOfArrivalsSiceStart + 1) * theDuration;
+
+ 			nextArrival = trainStartTime.add(millisecondsToNextArrival, "ms").format("HH:mm");
+ 		}
+
+ 		/*console.log("function findNextArrival(" + trainStartHH + ", " + trainStartMM + ", " + trainFrequency + ")" + "\n" +
+ 			"nextArrival = " + nextArrival);*/
+
+ 		return nextArrival;
+ 	}
+
+
+ 	function findMinutesToNextArrival(nextArrival)
+ 	{
+ 		console.log("findMinutesToNextArrival("+nextArrival+")");
+ 		// nextArrival = HH:mm 
+ 		var now = moment();
+
+ 		var timeUnits = nextArrival.split(":");
+
+ 		var arrival = moment();
+ 		arrival.hour(timeUnits[0]);
+ 		arrival.minute(timeUnits[1]);
+
+ 		return arrival.diff(now, 'minutes');
+ 	}
+
+	// DISPLAY INFO ON LAST TRAIN ADDED
+	// $("#lastTrainName").val().trim();
+	// $("#lastTrainNameDestination").val().trim();
+	// $("#lastTrainStart").val().trim();
+	// $("#lastTrainFreqency").val().trim();
+
+    $("#btn-submit").on("click", function() 
+    {
+        // prevent form from submitting
+        event.preventDefault();
+        console.log("SUBMIT BUTTON CLICKED");
+  		$("#submitErrorMessage").text("");
+
+		trainName_input = $("#trainNameInput").val().trim();
+		trainDestination_input = $("#trainDestinationInput").val().trim();
+		firstTrainTimeHH_input = $("#trainInitalTimeHHInput").val().trim();
+		firstTrainTimeMM_input = $("#trainInitalTimeMMInput").val().trim();
+		trainFrequency_input = $("#trainFreqencyInput").val().trim();
+
+		// is this a train that we already have in the database?
+
+		var inputError = validateInput(trainName_input, trainDestination_input , firstTrainTimeHH_input, firstTrainTimeMM_input, trainFrequency_input);
+
+		if(inputError === "")
+		{
+			if(firstTrainTimeHH_input.length === 1)
+			{
+				firstTrainTimeHH_input = "0" + firstTrainTimeHH_input;
+			}
+
+			if(firstTrainTimeMM_input.length === 1)
+			{
+				firstTrainTimeMM_input = "0" + firstTrainTimeMM_input;
+			}
+
+			var startTime = firstTrainTimeHH_input + ":" + firstTrainTimeMM_input;
+			var updaterName = googleUser.displayName;
+			var updaterEmail = googleUser.email;
+			var updateTime = moment().format("MM/DD/YYYY HH:mm:ss");
+			// add new object to firebase 
+	        database.ref().push(
+	        {
+	            name: trainName_input,
+	            destination: trainDestination_input,
+	            start: startTime,
+	            frequency: trainFrequency_input,
+	            updateBy_name: updaterName,
+	            updateBy_email: updaterEmail,
+	            updated: updateTime
+	        });
+
+			$("#trainNameInput").val("");
+			$("#trainDestinationInput").val("");
+			$("#trainInitalTimeHHInput").val("");
+			$("#trainInitalTimeMMInput").val("");
+			$("#trainFreqencyInput").val("");
+		}
+		else
+		{
+			$("#submitErrorMessage").text(inputError);
+		}
+		
+    });
+
+
 	database.ref().on("child_added", function(childSnapshot) 
 	{
 		// var trainTableData = $("#trainDataArea");
@@ -256,11 +272,15 @@ firebase.auth().getRedirectResult().then(function(result) {
 		var destination = childSnapshot.val().destination;
 		var frequency = childSnapshot.val().frequency;
 		var start = childSnapshot.val().start;
+		var nextArrival = "";
+		var minutes = "";
 
 		if(start.charAt(2) === ":")
 		{
 			var timeValue = start.split(":");
-			findNextArrival(timeValue[0], timeValue[1], frequency);
+			nextArrival = findNextArrival(timeValue[0], timeValue[1], frequency);
+
+			minutes = findMinutesToNextArrival(nextArrival);
 		}
 
 		// create elements for new table row
@@ -270,13 +290,18 @@ firebase.auth().getRedirectResult().then(function(result) {
 		var newTableRow_name = $("<td>");
 		var newTableRow_destination = $("<td>");
 		var newTableRow_frequency = $("<td>");
+		newTableRow_frequency.attr("class", "centerTableData");
 		var newTableRow_arrival = $("<td>");
+		newTableRow_arrival.attr("class", "centerTableData");
 		var newTableRow_minutes = $("<td>");
+		newTableRow_minutes.attr("class", "centerTableData");
 
 		// put data into row
 		newTableRow_name.text(name);
 		newTableRow_destination.text(destination);
 		newTableRow_frequency.text(frequency);
+		newTableRow_arrival.text(nextArrival);
+		newTableRow_minutes.text(minutes);
 
 		newTableRow.append(newTableRow_name);
 		newTableRow.append(newTableRow_destination);
@@ -284,11 +309,9 @@ firebase.auth().getRedirectResult().then(function(result) {
 		newTableRow.append(newTableRow_arrival);
 		newTableRow.append(newTableRow_minutes);
 
-
 		// moment js
 		// find next arrival
 		// find min
-
 
 		// add row to table
 		trainTableData.append(newTableRow);
@@ -296,39 +319,13 @@ firebase.auth().getRedirectResult().then(function(result) {
 		//Add info to last train added area
 		$("#lastTrainName").text(name);
 		$("#lastTrainNameDestination").text(destination);
-		$("#lastTrainStart").text(start);
-		$("#lastTrainFreqency").text(frequency);
-
+		$("#lastTrainStart").text(start + " (24-hour time)");
+		$("#lastTrainFreqency").text(frequency + " minutes");
 
 	// Handle the errors
 	}, function(errorObject) {
 	console.log("Errors handled: " + errorObject.code);
 	});
-
-
- 	function findNextArrival(trainStartHH, trainStartMM, trainFrequency)
- 	{
- 		// https://momentjs.com/docs/#/get-set/
- 		// https://www.tutorialspoint.com/momentjs/momentjs_durations.htm
-
- 		var now = moment();
-
- 		var trainStartTime = moment();
- 		trainStartTime.hour(trainStartHH);
- 		trainStartTime.minute(trainStartMM);
-
- 		var theDuration = moment.duration(Number.parseInt(trainFrequency));
- 		
-
- 		console.log(	"findNextArrival(" + trainStartHH + ", " +trainStartMM  + ")" + "\n" +
- 						"trainStartTime: " + trainStartTime);
-
- 	}
-
- 	function findMinutes(nextArrival)
- 	{
-
- 	}
 
 
     $(document).on("click", "tr.trainData", function() 
@@ -343,11 +340,16 @@ firebase.auth().getRedirectResult().then(function(result) {
     	// var selectedTrain_next = children[3].innerText;
     	// var selectedTrain_mins = children[4].innerText;
 
-
     	for(var i = 0; i < children.length; i++)
     	{
     		console.log("children["+i+"].innerText: " + children[i].innerText);
     	}
+
+// DOING WORK HERE 
+// FIND CHILD IN DATABASE WITH SAME TRAIN NAME AS ROW CLICKED
+
+// https://firebase.google.com/docs/reference/js/firebase.database.Query
+// https://firebase.google.com/docs/database/web/read-and-write
 
     	// https://firebase.google.com/docs/reference/js/firebase.database.Reference
 
@@ -356,7 +358,6 @@ firebase.auth().getRedirectResult().then(function(result) {
     	// https://firebase.google.com/docs/reference/js/firebase.database.DataSnapshot
 
 		// JSON.parse(localStorage.getItem('userFavorites'));
-
 
 		// trying to find child with matching name
 		// need to get that child's "first train time" value
@@ -375,6 +376,26 @@ firebase.auth().getRedirectResult().then(function(result) {
     });
 
 
+ 	// user signs-in with google account
+	$("#btn-googleSignIn").on("click", function()
+	{
+		console.log("SIGN IN CLICKED");
+		// https://firebase.google.com/docs/reference/js/firebase.User
+		var tmp = googleSignIn();
+		//console.log("tmp:" + "\n" + tmp);
+	});
+
+
+	$("#btn-noSignIn").on("click", function()
+	{	
+		console.log("NO GOOGLE CLICKED");
+		signInArea.hide();
+		trainSchedulerArea.show();
+		$("#userProfileArea").show();
+		updateUserInfo(defaultGoogleUser);
+	});
+
+
 // https://firebase.google.com/docs/database/admin/retrieve-data
 // https://firebase.google.com/docs/reference/js/firebase.database.Reference
 // https://firebase.google.com/docs/reference/js/firebase.database.Reference#once
@@ -386,49 +407,41 @@ firebase.auth().getRedirectResult().then(function(result) {
 
 // https://www.youtube.com/watch?v=F6UWb9FNnj4
 
- /*
+	 /*
+	    // Firebase watcher + initial loader HINT: This code behaves similarly to .on("value")
+	    dataRef.ref().on("child_added", function(childSnapshot) {
 
-    // Firebase watcher + initial loader HINT: This code behaves similarly to .on("value")
-    dataRef.ref().on("child_added", function(childSnapshot) {
+	      // Log everything that's coming out of snapshot
+	      console.log(childSnapshot.val().name);
+	      console.log(childSnapshot.val().name);
+	      console.log(childSnapshot.val().email);
+	      console.log(childSnapshot.val().age);
+	      console.log(childSnapshot.val().comment);
+	      console.log(childSnapshot.val().joinDate);
 
-      // Log everything that's coming out of snapshot
-      console.log(childSnapshot.val().name);
-      console.log(childSnapshot.val().name);
-      console.log(childSnapshot.val().email);
-      console.log(childSnapshot.val().age);
-      console.log(childSnapshot.val().comment);
-      console.log(childSnapshot.val().joinDate);
+	      // full list of items to the well
+	      $("#full-member-list").append("<div class='well'><span class='member-name'> " +
+	        childSnapshot.val().name +
+	        " </span><span class='member-email'> " + childSnapshot.val().email +
+	        " </span><span class='member-age'> " + childSnapshot.val().age +
+	        " </span><span class='member-comment'> " + childSnapshot.val().comment +
+	        " </span></div>");
 
-      // full list of items to the well
-      $("#full-member-list").append("<div class='well'><span class='member-name'> " +
-        childSnapshot.val().name +
-        " </span><span class='member-email'> " + childSnapshot.val().email +
-        " </span><span class='member-age'> " + childSnapshot.val().age +
-        " </span><span class='member-comment'> " + childSnapshot.val().comment +
-        " </span></div>");
+	      // Handle the errors
+	    }, function(errorObject) {
+	      console.log("Errors handled: " + errorObject.code);
 
-      // Handle the errors
-    }, function(errorObject) {
-      console.log("Errors handled: " + errorObject.code);
+	    });
 
-    });
+	    dataRef.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+	      // Change the HTML to reflect
+	      $("#name-display").text(snapshot.val().name);
+	      $("#email-display").text(snapshot.val().email);
+	      $("#age-display").text(snapshot.val().age);
+	      $("#comment-display").text(snapshot.val().comment);
+	    });
 
-
-
-
-
-
-    dataRef.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
-      // Change the HTML to reflect
-      $("#name-display").text(snapshot.val().name);
-      $("#email-display").text(snapshot.val().email);
-      $("#age-display").text(snapshot.val().age);
-      $("#comment-display").text(snapshot.val().comment);
-    });
-
- */
-
-
+	 */
 
 
  	/* MOMENT JS
@@ -467,16 +480,6 @@ firebase.auth().getRedirectResult().then(function(result) {
 
 	*/
 
-
-
-
-
-	/*
-
-	
-
-
-	*/
  });
 
 

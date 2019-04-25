@@ -29,7 +29,8 @@
 		<div class="container">
 
 			<div id="signInArea" class="col-12">
-				<button id="btn-googleSignIn" class="btn btn-dark">Sign-In With Google</button>
+				<button id="btn-googleSignIn" class="btn btn-dark signInBtn">Sign In With Google</button>
+				<button id="btn-noSignIn" class="btn btn-dark signInBtn">Proceed Without Google</button>
 			</div> <!-- /signInArea -->
 	
 			<div id="trainSchedulerArea">
@@ -37,10 +38,21 @@
 					<div id="header" class="col-12 jumbotron">
 						<p id="title">Train Scheduler</p>
 						<p id="subTitle">View current train schedules and edit train data.</p>
-						<p>
-							<span id="googleDisplayName"></span><br>
-							<span id="googleEmail"></span>
-						</p>
+
+						<div class="row" id="userProfileArea">
+							<div class="col-3" class="userProfileArea_spacer"></div>
+							<div id="profileImageArea" class="col-3">
+								<img src="#" id="profileImage">
+							</div>
+							<div id="userDataArea" class="col-3">
+								<span id="googleDisplayName"></span><br>
+								<span id="googleEmail"></span><br>
+								<button id="btn-googleSignOut" class="btn btn-dark btn-submit">Sign Out</button>
+							</div>
+							<div class="col-3" class="userProfileArea_spacer"></div>
+						</div><!-- /row -->
+
+
 					</div>
 				</div> <!-- /row -->
 			
@@ -55,12 +67,13 @@
 											<!-- IDEA: each heading should be a button that sorts the table -->
 											<th id="trainName" scope="col">Train</th>
 											<th id="trainDestination" scope="col">Destination</th>
-											<th id="trainFrequency" scope="col">Frequency</th>
-											<th id="trainArrival" scope="col">Next Arrival</th>
+											<th id="trainFrequency" scope="col">Frequency<br>(min)</th>
+											<th id="trainArrival" scope="col">Next Arrival<br>(24-hour time)</th>
 											<th id="trainMinutes" scope="col">Minutes Away</th>
 										</tr>
 									</thead>
 									<tbody id="trainDataArea">
+										<!--
 										<tr class="trainData">
 											<td>Train example 1</td>
 											<td>Destination example 1</td>
@@ -82,6 +95,7 @@
 											<td>Next Arrival example 3</td>
 											<td>Minutes Away example 3</td>
 										</tr>
+										-->
 									</tbody>
 								</table>
 							</div> <!-- /card-body -->
@@ -108,7 +122,7 @@
 
 									<span class="inputLabel">Freqency: </span> <span class="inputSpecificationLabel">(min)</span><br>
 										<input id="trainFreqencyInput" class="textboxInput" type="number" min="1" max="1440"> <br>
-									<input id="btn-submit" class="btn btn-dark" type="submit" value="Submit"> <br>
+									<input id="btn-submit" class="btn btn-dark btn-submit" type="submit" value="Submit"> <br>
 									<span id="submitErrorMessage"></span>
 								</form>
 							</div> <!-- /card-body -->
