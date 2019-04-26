@@ -64,38 +64,14 @@
 								<table class="table">
 									<thead>
 										<tr class="trainDataHeader"> 
-											<!-- IDEA: each heading should be a button that sorts the table -->
-											<th id="trainName" scope="col">Train</th>
-											<th id="trainDestination" scope="col">Destination</th>
-											<th id="trainFrequency" scope="col">Frequency<br>(min)</th>
-											<th id="trainArrival" scope="col">Next Arrival<br>(24-hour time)</th>
-											<th id="trainMinutes" scope="col">Minutes Away</th>
+											<th id="trainName" scope="col">Train <i class="fas fa-caret-square-down"></i></th>
+											<th id="trainDestination" scope="col">Destination <i class="fas fa-caret-square-down"></i></th>
+											<th id="trainFrequency" scope="col">Frequency <i class="fas fa-caret-square-down"></i><br>(min)</th>
+											<th id="trainArrival" scope="col">Next Arrival <i class="fas fa-caret-square-down"></i><br>(24-hour time)</th>
+											<th id="trainMinutes" scope="col">Minutes Away <i class="fas fa-caret-square-down"></i></th>
 										</tr>
 									</thead>
 									<tbody id="trainDataArea">
-										<!--
-										<tr class="trainData">
-											<td>Train example 1</td>
-											<td>Destination example 1</td>
-											<td>Frequency example 1</td>
-											<td>Next Arrival example 1</td>
-											<td>Minutes Away example 1</td>
-											</tr>
-										<tr class="trainData">
-											<td>Train example 2</td>
-											<td>Destination example 2</td>
-											<td>Frequency example 2</td>
-											<td>Next Arrival example 2</td>
-											<td>Minutes Away example 2</td>
-										</tr>
-										<tr class="trainData">
-											<td>Train example 3</td>
-											<td>Destination example 3</td>
-											<td>Frequency example 3</td>
-											<td>Next Arrival example 3</td>
-											<td>Minutes Away example 3</td>
-										</tr>
-										-->
 									</tbody>
 								</table>
 							</div> <!-- /card-body -->
@@ -122,7 +98,9 @@
 
 									<span class="inputLabel">Freqency: </span> <span class="inputSpecificationLabel">(min)</span><br>
 										<input id="trainFreqencyInput" class="textboxInput" type="number" min="1" max="1440"> <br>
-									<input id="btn-submit" class="btn btn-dark btn-submit" type="submit" value="Submit"> <br>
+									<input id="btn-add" class="btn btn-dark btn-submit" type="submit" value="Add New Train"> 
+									<button id="btn-update" class="btn btn-dark btn-submit">Update Existing Train</button>
+									<br>
 									<span id="submitErrorMessage"></span>
 								</form>
 							</div> <!-- /card-body -->
@@ -153,17 +131,14 @@
 				backspace
 				https://fontawesome.com/icons/backspace?style=solid
 
-
 				caret-square-down
 				https://fontawesome.com/icons/caret-square-down?style=solid
 
 				caret-square-up
 				https://fontawesome.com/icons/caret-square-up?style=solid
 
-
 				list-alt
 				https://fontawesome.com/icons/list-alt?style=solid
-
 
 				redo
 				https://fontawesome.com/icons/redo?style=solid
@@ -172,12 +147,27 @@
 				sync-alt
 				https://fontawesome.com/icons/sync-alt?style=solid
 
-
 				sort-up
 				https://fontawesome.com/icons/sort-up?style=solid
 
 				sort-down
 				https://fontawesome.com/icons/sort-down?style=solid
+
+
+
+				sign-in-alt
+				https://fontawesome.com/icons/sign-in-alt?style=solid
+
+				sign-out-alt
+				https://fontawesome.com/icons/sign-out-alt?style=regular
+
+
+
+				google
+				https://fontawesome.com/icons/google?style=brands
+
+				chrome
+				https://fontawesome.com/icons/chrome?style=brands
 
 			-->
 
