@@ -23,6 +23,10 @@ body{
 }
 
 
+ul{
+	margin-left: 2rem;
+	list-style-type: disc;
+}
 /*** CLASS ***/
 
 .card{
@@ -227,4 +231,11 @@ body{
 	text-align: left;
 }
 
+#appInstructions{
+	margin: 2px auto 20px auto;
+	padding: 10px;
+	width: 95%;
+	border: 2px solid #343a40;
+
+}
 

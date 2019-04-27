@@ -84,6 +84,13 @@
 						<div class="card">
 							<div class="card-header">Add/Update Train</div>
 							<div class="card-body">
+								<div id="appInstructions">
+									<p>To <strong>ADD a new train</strong> provide the needed information below and click the "Add New Train" button.</p>
+									
+									<p>To <strong>UPDATE an existing train</strong> click on the train in the table that you want to update and make your changes in the fields below. Click the "Update Existing Train" button to send the new information to the database.</p>
+									
+									<p>To <strong>CLONE an exisitng train</strong> follow the "update" instructions and use the "Add New Train" button instead of the "Update Existing Train" button. Note that you will not be able to submit if all data elements match an existing train.</p>
+								</div>
 								<form> 
 									<span class="inputLabel">Train Name: </span><br>
 										<input id="trainNameInput" class="textboxInput" type="text"><br>
@@ -100,6 +107,7 @@
 										<input id="trainFreqencyInput" class="textboxInput" type="number" min="1" max="1440"> <br>
 									<input id="btn-add" class="btn btn-dark btn-submit" type="submit" value="Add New Train"> 
 									<button id="btn-update" class="btn btn-dark btn-submit">Update Existing Train</button>
+									<button id="btn-remove" class="btn btn-dark btn-submit">Remove Existing Train</button>
 									<br>
 									<span id="submitErrorMessage"></span>
 								</form>

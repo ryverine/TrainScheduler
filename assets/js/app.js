@@ -1,6 +1,8 @@
 
 $(document).ready(function() 
 {
+	/*** GLOBAL ***/
+
 	var signInArea = $("#signInArea");
 	var trainSchedulerArea = $("#trainSchedulerArea");
 
@@ -38,6 +40,7 @@ $(document).ready(function()
 		updated: ""
 	}
 
+	/*** FUNCTIONS ***/
 
 	function updateUserInfo (theUser)
 	{
@@ -210,6 +213,53 @@ $(document).ready(function()
 	} 
 
 
+	function addTrainToTable(childObj)
+	{
+		var name = childObj.val().name;
+		var destination = childObj.val().destination;
+		var frequency = childObj.val().frequency;
+		var start = childObj.val().start;
+
+		var nextArrival = "";
+		var minutes = "";
+
+		if(start.charAt(2) === ":")
+		{
+			var timeValue = start.split(":");
+			nextArrival = findNextArrival(timeValue[0], timeValue[1], frequency);
+
+			minutes = findMinutesToNextArrival(nextArrival);
+		}
+
+		var newTableRow = $("<tr>");
+		newTableRow.attr("class", "trainData");
+
+		var newTableRow_name = $("<td>");
+		var newTableRow_destination = $("<td>");
+		var newTableRow_frequency = $("<td>");
+		newTableRow_frequency.attr("class", "centerTableData");
+		var newTableRow_arrival = $("<td>");
+		newTableRow_arrival.attr("class", "centerTableData");
+		var newTableRow_minutes = $("<td>");
+		newTableRow_minutes.attr("class", "centerTableData");
+
+		newTableRow_name.text(name);
+		newTableRow_destination.text(destination);
+		newTableRow_frequency.text(frequency);
+		newTableRow_arrival.text(nextArrival);
+		newTableRow_minutes.text(minutes);
+
+		newTableRow.append(newTableRow_name);
+		newTableRow.append(newTableRow_destination);
+		newTableRow.append(newTableRow_frequency);
+		newTableRow.append(newTableRow_arrival);
+		newTableRow.append(newTableRow_minutes);
+
+		trainTableData.append(newTableRow);
+	}
+
+	/*** PAGE EVENTS ***/
+
     $("#btn-add").on("click", function() 
     {
         event.preventDefault();
@@ -261,6 +311,17 @@ $(document).ready(function()
 				$("#trainInitalTimeHHInput").val("");
 				$("#trainInitalTimeMMInput").val("");
 				$("#trainFreqencyInput").val("");
+
+				selectedExistingTrain = {
+					key: "",
+					name: "",
+					frequency: "",
+					destination: "",
+					start: "",
+					updateBy_name: "",
+					updateBy_email: "",
+					updated: ""
+				}
 			}
 			else
 			{
@@ -335,6 +396,96 @@ $(document).ready(function()
 		}
 	 });
 
+	 
+	 $("#btn-remove").on("click", function() 
+	 {
+		event.preventDefault();
+		 console.log("REMOVE BUTTON CLICKED");
+
+		/*
+https://firebase.google.com/docs/reference/js/firebase.database.DataSnapshot
+
+https://firebase.google.com/docs/reference/js/firebase.database.Reference.html#on
+child_removed event
+
+This event will be triggered once every time a child is removed. The DataSnapshot passed into the callback will be the old data for the child that was removed. A child will get removed when either:
+
+a client explicitly calls remove() on that child or one of its ancestors
+
+a client calls set(null) on that child or one of its ancestors
+
+that child has all of its children removed
+
+there is a query in effect which now filters out the child (because it's sort order changed or the max limit was hit)
+
+
+
+		 */
+
+
+
+
+	 });
+
+
+	 $(document).on("click", "tr.trainData", function() 
+	 {
+		 var children = $(this).children();
+ 
+		 var selectedTrain_name = children[0].innerText;
+		 var selectedTrain_dest = children[1].innerText;
+		 var selectedTrain_freq = children[2].innerText;
+ 
+		 var trainData = getExistingTrainData(selectedTrain_name, selectedTrain_dest, selectedTrain_freq);
+ 
+		 if(trainData.key !== "")
+		 {
+			 selectedExistingTrain.key = trainData.key;
+			 selectedExistingTrain.name = trainData.name;
+			 selectedExistingTrain.frequency = trainData.frequency;
+			 selectedExistingTrain.destination = trainData.destination;
+			 selectedExistingTrain.start = trainData.start;
+			 selectedExistingTrain.updateBy_name = trainData.updateBy_name;
+			 selectedExistingTrain.updateBy_email = trainData.updateBy_email;
+			 selectedExistingTrain.updated = trainData.updated;
+ 
+			 $("#trainNameInput").val(trainData.name);
+			 $("#trainDestinationInput").val(trainData.destination);
+			 $("#trainFreqencyInput").val(trainData.frequency);
+ 
+			 var timeUnits = trainData.start.split(":");
+ 
+			 $("#trainInitalTimeHHInput").val(timeUnits[0]);
+			 $("#trainInitalTimeMMInput").val(timeUnits[1]);
+		 }
+	 
+	 });
+ 
+ 
+	 $("#btn-googleSignIn").on("click", function()
+	 {
+		 var tmp = googleSignIn();
+	 });
+ 
+ 
+	 $("#btn-noSignIn").on("click", function()
+	 {	
+		 signInArea.hide();
+		 trainSchedulerArea.show();
+		 $("#userProfileArea").show();
+		 updateUserInfo(defaultGoogleUser);
+	 });
+ 
+ 
+	 $("#btn-googleSignOut").on("click", function()
+	 {	
+		 googleSignOut();
+	 });
+ 
+
+
+
+	 /*** DATABASE LISTENERS */
 
 	database.ref().on("child_added", function(childSnapshot) 
 	{
@@ -392,106 +543,7 @@ $(document).ready(function()
 	});
 
 
-	function addTrainToTable(childObj)
-	{
-		var name = childObj.val().name;
-		var destination = childObj.val().destination;
-		var frequency = childObj.val().frequency;
-		var start = childObj.val().start;
-
-		var nextArrival = "";
-		var minutes = "";
-
-		if(start.charAt(2) === ":")
-		{
-			var timeValue = start.split(":");
-			nextArrival = findNextArrival(timeValue[0], timeValue[1], frequency);
-
-			minutes = findMinutesToNextArrival(nextArrival);
-		}
-
-		var newTableRow = $("<tr>");
-		newTableRow.attr("class", "trainData");
-
-		var newTableRow_name = $("<td>");
-		var newTableRow_destination = $("<td>");
-		var newTableRow_frequency = $("<td>");
-		newTableRow_frequency.attr("class", "centerTableData");
-		var newTableRow_arrival = $("<td>");
-		newTableRow_arrival.attr("class", "centerTableData");
-		var newTableRow_minutes = $("<td>");
-		newTableRow_minutes.attr("class", "centerTableData");
-
-		newTableRow_name.text(name);
-		newTableRow_destination.text(destination);
-		newTableRow_frequency.text(frequency);
-		newTableRow_arrival.text(nextArrival);
-		newTableRow_minutes.text(minutes);
-
-		newTableRow.append(newTableRow_name);
-		newTableRow.append(newTableRow_destination);
-		newTableRow.append(newTableRow_frequency);
-		newTableRow.append(newTableRow_arrival);
-		newTableRow.append(newTableRow_minutes);
-
-		trainTableData.append(newTableRow);
-	}
-
-
-    $(document).on("click", "tr.trainData", function() 
-    {
-    	var children = $(this).children();
-
-    	var selectedTrain_name = children[0].innerText;
-    	var selectedTrain_dest = children[1].innerText;
-    	var selectedTrain_freq = children[2].innerText;
-
-    	var trainData = getExistingTrainData(selectedTrain_name, selectedTrain_dest, selectedTrain_freq);
-
-    	if(trainData.key !== "")
-    	{
-			selectedExistingTrain.key = trainData.key;
-			selectedExistingTrain.name = trainData.name;
-			selectedExistingTrain.frequency = trainData.frequency;
-			selectedExistingTrain.destination = trainData.destination;
-			selectedExistingTrain.start = trainData.start;
-			selectedExistingTrain.updateBy_name = trainData.updateBy_name;
-			selectedExistingTrain.updateBy_email = trainData.updateBy_email;
-			selectedExistingTrain.updated = trainData.updated;
-
-			$("#trainNameInput").val(trainData.name);
-			$("#trainDestinationInput").val(trainData.destination);
-			$("#trainFreqencyInput").val(trainData.frequency);
-
-			var timeUnits = trainData.start.split(":");
-
-			$("#trainInitalTimeHHInput").val(timeUnits[0]);
-			$("#trainInitalTimeMMInput").val(timeUnits[1]);
-		}
 	
-    });
-
-
-	$("#btn-googleSignIn").on("click", function()
-	{
-		var tmp = googleSignIn();
-	});
-
-
-	$("#btn-noSignIn").on("click", function()
-	{	
-		signInArea.hide();
-		trainSchedulerArea.show();
-		$("#userProfileArea").show();
-		updateUserInfo(defaultGoogleUser);
-	});
-
-
-	$("#btn-googleSignOut").on("click", function()
-	{	
-		googleSignOut();
-	});
-
 
  });
 
