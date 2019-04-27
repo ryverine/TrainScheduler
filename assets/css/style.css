@@ -1,15 +1,4 @@
 
-/*
-https://www.bitdegree.org/learn/bootstrap-colors
-https://getbootstrap.com/docs/4.0/utilities/colors/
-
-bg-light = #f8f9fa 
-other light gray:
-	#f0f2f4
-	#e1e6ea 
-	#d2d9df
-*/
-
 *{
 	font-size: 16px;
 }
@@ -184,22 +173,27 @@ body{
 
 #trainName{
 	border: none;
+	vertical-align: text-top;
 }
 
 #trainDestination{
 	border: none;
+	vertical-align: text-top;
 }
 
 #trainFrequency{
 	border: none;
+	vertical-align: text-top;
 }
 
 #trainArrival{
 	border: none;
+	vertical-align: text-top;
 }
 
 #trainMinutes{
 	border: none;
+	vertical-align: text-top;
 }
 
 #lastArea{

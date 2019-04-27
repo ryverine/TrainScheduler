@@ -1,47 +1,3 @@
- 
-/*
-
-Train Scheduler 
-
-Instructions
-
-Make sure that your app suits this basic spec:
-
-
-When adding trains, administrators should be able to submit the following:
-Train Name
-Destination 
-First Train Time -- in military time
-Frequency -- in minutes
-Code this app to calculate when the next train will arrive; this should be relative to the current time.
-Users from many different machines must be able to view same train times.
-Styling and theme are completely up to you. Get Creative!
-
-
-Bonus (Extra Challenges)
-
-Consider updating your "minutes to arrival" and "next train time" text once every minute. 
-This is significantly more challenging; only attempt this if you've completed the actual activity and committed it 
-somewhere on GitHub for safekeeping (and maybe create a second GitHub repo).
-
-Try adding update and remove buttons for each train. Let the user edit the row's elements-- 
-allow them to change a train's Name, Destination and Arrival Time (and then, by relation, minutes to arrival).
-
-As a final challenge, make it so that only users who log into the site with their Google or GitHub accounts can use your site. 
-You'll need to read up on Firebase authentication for this bonus exercise.
-// https://firebase.google.com/docs/auth/web/google-signin
-// https://firebase.google.com/docs/auth/web/github-auth
-// https://howtofirebase.com/firebase-authentication-for-web-d58aad62cf6d
-// https://www.youtube.com/watch?v=9kRgVxULbag
-
-*/
-
-// Create GUID / UUID in JavaScript?
-// https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
-
-// Military Time Chart
-// http://militarytimechart.com/
-
 
 $(document).ready(function() 
 {
@@ -68,12 +24,9 @@ $(document).ready(function()
 	var trainName_input = "";
 	var trainDestination_input = "";
 	var trainFrequency_input = 0;
-	var firstTrainTime_input = moment();
 
 	var trainTableData = $("#trainDataArea");
 
-	// use this object to hold as refrence 
-	// check this object when adding data to database
 	var selectedExistingTrain = {
 		key: "",
 		name: "",
@@ -100,19 +53,15 @@ $(document).ready(function()
 
 	function googleSignIn()
 	{
-		// https://firebase.google.com/docs/reference/js/firebase.auth.GoogleAuthProvider
 		var provider = new firebase.auth.GoogleAuthProvider();
 		firebase.auth().useDeviceLanguage();
 
 		provider.addScope("profile");
 		provider.addScope("email");
 
-		// https://firebase.google.com/docs/reference/js/firebase.auth.Auth.html#signinwithpopup
 		return firebase.auth().signInWithPopup(provider).then(function(result)
 		{
-			//var token = result.credential.accessToken;
 			googleUser = result.user;
-			console.log("result user display name: " + googleUser.displayName);
 
 			signInArea.hide();
 			trainSchedulerArea.show();
@@ -133,7 +82,6 @@ $(document).ready(function()
 		updateUserInfo(defaultGoogleUser);
 		signInArea.show();
 		trainSchedulerArea.hide();
-		//$("#userProfileArea").show();
 	}
 
 
@@ -167,10 +115,7 @@ $(document).ready(function()
 
  	function findNextArrival(trainStartHH, trainStartMM, trainFrequency)
  	{
- 		// https://momentjs.com/docs/#/get-set/
- 		// https://www.tutorialspoint.com/momentjs/momentjs_durations.htm
-
- 		var nextArrival = trainStartHH + ":" + trainStartMM; // HH:mm 24-hour format
+ 		var nextArrival = trainStartHH + ":" + trainStartMM;
 
  		var now = moment();
 
@@ -178,7 +123,6 @@ $(document).ready(function()
  		trainStartTime.hour(trainStartHH);
  		trainStartTime.minute(trainStartMM);
 
- 		// if diff <= 0, next arrival is same as start time
  		if(now.diff(trainStartTime) > 0)
  		{
  			var theDuration = moment.duration(Number.parseInt(trainFrequency), "minutes");
@@ -192,34 +136,33 @@ $(document).ready(function()
  			nextArrival = trainStartTime.add(millisecondsToNextArrival, "ms").format("HH:mm");
  		}
 
- 		/*console.log("function findNextArrival(" + trainStartHH + ", " + trainStartMM + ", " + trainFrequency + ")" + "\n" +
- 			"nextArrival = " + nextArrival);*/
-
  		return nextArrival;
  	}
 
 
  	function findMinutesToNextArrival(nextArrival)
  	{
- 		//console.log("findMinutesToNextArrival("+nextArrival+")");
- 		// nextArrival = HH:mm 
  		var now = moment();
 
  		var timeUnits = nextArrival.split(":");
 
  		var arrival = moment();
  		arrival.hour(timeUnits[0]);
- 		arrival.minute(timeUnits[1]);
-
- 		return arrival.diff(now, 'minutes');
+		arrival.minute(timeUnits[1]);
+		 
+		if(now >= arrival)
+		{
+			return now.diff(arrival, 'minutes');
+		}
+		else
+		{
+			return arrival.diff(now, 'minutes');
+		}
  	}
 
 
  	function getExistingTrainData(name, dest, freq)
 	{
-		// if name, dest, and freq are the same then we consider this the same train
-		// return that train's data from firebase, or an empty object
-
 		var tmpTrain = {
 			key: "",
 			name: "",
@@ -247,16 +190,6 @@ $(document).ready(function()
 				tmpTrain.updateBy_name = snapshot.child("updateBy_name").val();
 				tmpTrain.updateBy_email = snapshot.child("updateBy_email").val();
 				tmpTrain.updated = snapshot.child("updated").val();
-
-				console.log("tmpTrain:" + "\n" + 
-							"key: " + tmpTrain.key + "\n" + 
-							"name: " + tmpTrain.name + "\n" + 
-							"frequency: " + tmpTrain.frequency + "\n" + 
-							"destination: " + tmpTrain.destination + "\n" + 
-							"start: " + tmpTrain.start  + "\n" + 
-							"updateBy_name: " + tmpTrain.updateBy_name + "\n" + 
-							"updateBy_email: " + tmpTrain.updateBy_email + "\n" + 
-							"updated: " + tmpTrain.updated);
   			}
 		});
 
@@ -264,12 +197,17 @@ $(document).ready(function()
 	}
 
 
-	// function populate last train section (look at  getExistingTrainData(name, dest, freq)
-	// DISPLAY INFO ON LAST TRAIN ADDED
-	// $("#lastTrainName").val().trim();
-	// $("#lastTrainNameDestination").val().trim();
-	// $("#lastTrainStart").val().trim();
-	// $("#lastTrainFreqency").val().trim();
+	function populateLastTrainArea(theChild)
+	{
+		$("#lastTrainName").text(theChild.child("name").val());
+		$("#lastTrainNameDestination").text(theChild.child("destination").val());
+
+		$("#lastTrainStart").text(theChild.child("start").val() + " (24-hour time)");
+		$("#lastTrainFreqency").text(theChild.child("frequency").val() + " minutes");
+
+		$("#lastTrainUpdated").text(theChild.child("updated").val());
+		$("#lastTrainUpdateBy").html(theChild.child("updateBy_name").val() + "<br>" + "(" + theChild.child("updateBy_email").val() + ")");
+	} 
 
 
     $("#btn-add").on("click", function() 
@@ -283,8 +221,6 @@ $(document).ready(function()
 		firstTrainTimeHH_input = $("#trainInitalTimeHHInput").val().trim();
 		firstTrainTimeMM_input = $("#trainInitalTimeMMInput").val().trim();
 		trainFrequency_input = $("#trainFreqencyInput").val().trim();
-
-		// test to see if this is a train that we already have in the database?
 
 		var existingTrainData = getExistingTrainData(trainName_input, trainDestination_input, trainFrequency_input)
 
@@ -308,8 +244,6 @@ $(document).ready(function()
 				var updaterName = googleUser.displayName;
 				var updaterEmail = googleUser.email;
 				var updateTime = moment().format("MM/DD/YYYY HH:mm:ss");
-
-				// add new object to firebase 
 
 		        database.ref().push(
 		        {
@@ -343,9 +277,8 @@ $(document).ready(function()
 
 	 $("#btn-update").on("click", function() 
 	 {
-		// prevent form from submitting
 		event.preventDefault();
-		console.log("UPDATE BUTTON CLICKED");
+
 		$("#submitErrorMessage").text("");
 
 		if(selectedExistingTrain.key === "")
@@ -379,19 +312,6 @@ $(document).ready(function()
 				var updaterEmail = googleUser.email;
 				var updateTime = moment().format("MM/DD/YYYY HH:mm:ss");
 			
-				console.log("selectedExistingTrain:" + "\n" + 
-							"key: " + selectedExistingTrain.key  + "\n" + 
-							"name: " + selectedExistingTrain.name  + "\n" + 
-							"frequency: " + selectedExistingTrain.frequency  + "\n" + 
-							"destination: " + selectedExistingTrain.destination  + "\n" + 
-							"start: " + selectedExistingTrain.start  + "\n" + 
-							"updateBy_name: " + selectedExistingTrain.updateBy_name  + "\n" + 
-							"updateBy_email: " + selectedExistingTrain.updateBy_email  + "\n" + 
-							"updated: " + selectedExistingTrain.updated);
-
-				// Firebase DB - How to update particular value of child in Firebase Database
-				// https://stackoverflow.com/questions/40589397/firebase-db-how-to-update-particular-value-of-child-in-firebase-database
-
 				database.ref(selectedExistingTrain.key).set({
 					name: trainName_input,
 					frequency: trainFrequency_input, 
@@ -407,19 +327,6 @@ $(document).ready(function()
 				$("#trainInitalTimeHHInput").val("");
 				$("#trainInitalTimeMMInput").val("");
 				$("#trainFreqencyInput").val("");
-
-				// should not clear object until table has been updated
-				/*
-				selectedExistingTrain = {
-					key: "",
-					name: "",
-					frequency: "",
-					destination: "",
-					start: "",
-					updateBy_name: "",
-					updateBy_email: "",
-					updated: ""
-				}*/
 			}
 			else
 			{
@@ -431,119 +338,44 @@ $(document).ready(function()
 
 	database.ref().on("child_added", function(childSnapshot) 
 	{
-		// var trainTableData = $("#trainDataArea");
-		console.log("CHILD ADDED");
 		addTrainToTable(childSnapshot);
+		populateLastTrainArea(childSnapshot);
 
-		// get data from snapshot
-		/*var name = childSnapshot.val().name;
-		var destination = childSnapshot.val().destination;
-		var frequency = childSnapshot.val().frequency;
-		var start = childSnapshot.val().start;
-		var nextArrival = "";
-		var minutes = "";
-
-		if(start.charAt(2) === ":")
-		{
-			var timeValue = start.split(":");
-			nextArrival = findNextArrival(timeValue[0], timeValue[1], frequency);
-
-			minutes = findMinutesToNextArrival(nextArrival);
-		}
-
-		// create elements for new table row
-		var newTableRow = $("<tr>");
-		newTableRow.attr("class", "trainData");
-
-		var newTableRow_name = $("<td>");
-		var newTableRow_destination = $("<td>");
-		var newTableRow_frequency = $("<td>");
-		newTableRow_frequency.attr("class", "centerTableData");
-		var newTableRow_arrival = $("<td>");
-		newTableRow_arrival.attr("class", "centerTableData");
-		var newTableRow_minutes = $("<td>");
-		newTableRow_minutes.attr("class", "centerTableData");
-
-		// put data into row
-		newTableRow_name.text(name);
-		newTableRow_destination.text(destination);
-		newTableRow_frequency.text(frequency);
-		newTableRow_arrival.text(nextArrival);
-		newTableRow_minutes.text(minutes);
-
-		newTableRow.append(newTableRow_name);
-		newTableRow.append(newTableRow_destination);
-		newTableRow.append(newTableRow_frequency);
-		newTableRow.append(newTableRow_arrival);
-		newTableRow.append(newTableRow_minutes);
-
-		// moment js
-		// find next arrival
-		// find min
-
-		// add row to table
-		trainTableData.append(newTableRow);
-
-		//Add info to last train added area
-		$("#lastTrainName").text(name);
-		$("#lastTrainNameDestination").text(destination);
-		$("#lastTrainStart").text(start + " (24-hour time)");
-		$("#lastTrainFreqency").text(frequency + " minutes");*/
-
-	// Handle the errors
 	}, function(errorObject) {
 	console.log("Errors handled: " + errorObject.code);
 	});
 
 
- 	// firebase. database. Reference
- 	// https://firebase.google.com/docs/reference/js/firebase.database.Reference.html#on
 	database.ref().on("child_changed", function(childSnapshot) 
 	{
-		console.log("CHILD CHANGED");
-		//updateTrainTable(childSnapshot);
-		// find table row with same name, dest, and freq
-
-		// var trainTableData = $("#trainDataArea");
-		
 		var tableRows = trainTableData.children();
-
-		console.log("trainTableData.children(): " + "\n" + tableRows);
 
 		for(var i = 0; i < tableRows.length; i++)
 		{
-			var rowData = tableRows[i].find("td");
-			// https://api.jquery.com/children/
-			// https://www.w3schools.com/jquery/jquery_traversing_descendants.asp
+			var rowData = $(tableRows[i]).children();
 
-			console.log("tableRows.children(): " + "\n" + rowData);
-
-    		rowNameValue = rowData[0].innerText;
-    		rowDestValue = rowData[1].innerText;
-    		rowFreqValue = rowData[2].innerText;
-    		//rowArrivalValue = rowData[3].innerText;
-    		//rowMinutesValue = rowData[4].innerText;
-
+    		var rowNameValue = rowData[0].innerText;
+    		var rowDestValue = rowData[1].innerText;
+			var rowFreqValue = rowData[2].innerText;
+			
     		if (rowNameValue.toUpperCase() === selectedExistingTrain.name.toUpperCase() &&
     			rowDestValue.toUpperCase() === selectedExistingTrain.destination.toUpperCase() &&
     			rowFreqValue.toUpperCase() === selectedExistingTrain.frequency.toUpperCase())
     		{
-    			console.log("MATCHING ROW FOUND!")
-    			rowData[0].text(childSnapshot.name);
-    			rowData[1].text(childSnapshot.destination);
-    			rowData[2].text(childSnapshot.frequency);
-
-    			var startTimeUnits = childSnapshot.start.split(":");
-
+    			$(rowData[0]).text(childSnapshot.child("name").val());
+    			$(rowData[1]).text(childSnapshot.child("destination").val());
+				$(rowData[2]).text(childSnapshot.child("frequency").val());
+				
+				var startTimeUnits = childSnapshot.child("start").val().split(":");
+				
     			var arrival = findNextArrival(startTimeUnits[0], startTimeUnits[1], childSnapshot.frequency);
-    			rowData[3].text(arrival);
-
-    			rowData[4].text(findMinutesToNextArrival(arrival));
+    			$(rowData[3]).text(arrival);
+				$(rowData[4]).text(findMinutesToNextArrival(arrival));
+				
+				populateLastTrainArea(childSnapshot);
     		}
 		}
 
-		// last thing to do is clear object
-		// should not clear object until table has been updated
 		selectedExistingTrain = {
 			key: "",
 			name: "",
@@ -562,7 +394,6 @@ $(document).ready(function()
 
 	function addTrainToTable(childObj)
 	{
-		// get data from snapshot
 		var name = childObj.val().name;
 		var destination = childObj.val().destination;
 		var frequency = childObj.val().frequency;
@@ -579,7 +410,6 @@ $(document).ready(function()
 			minutes = findMinutesToNextArrival(nextArrival);
 		}
 
-		// create elements for new table row
 		var newTableRow = $("<tr>");
 		newTableRow.attr("class", "trainData");
 
@@ -592,7 +422,6 @@ $(document).ready(function()
 		var newTableRow_minutes = $("<td>");
 		newTableRow_minutes.attr("class", "centerTableData");
 
-		// put data into row
 		newTableRow_name.text(name);
 		newTableRow_destination.text(destination);
 		newTableRow_frequency.text(frequency);
@@ -605,28 +434,12 @@ $(document).ready(function()
 		newTableRow.append(newTableRow_arrival);
 		newTableRow.append(newTableRow_minutes);
 
-		// moment js
-		// find next arrival
-		// find min
-
-		// add row to table
 		trainTableData.append(newTableRow);
-
-		//Add info to last train added area
-		$("#lastTrainName").text(name);
-		$("#lastTrainNameDestination").text(destination);
-		$("#lastTrainStart").text(start + " (24-hour time)");
-		$("#lastTrainFreqency").text(frequency + " minutes");
 	}
-
-
-
 
 
     $(document).on("click", "tr.trainData", function() 
     {
-    	console.log("trainData clicked!");
-
     	var children = $(this).children();
 
     	var selectedTrain_name = children[0].innerText;
@@ -655,29 +468,18 @@ $(document).ready(function()
 			$("#trainInitalTimeHHInput").val(timeUnits[0]);
 			$("#trainInitalTimeMMInput").val(timeUnits[1]);
 		}
-		else
-		{
-			// do nothing
-		}
-
-		// https://firebase.google.com/docs/reference/js/firebase.database.Query
-		// Find all dinosaurs whose names come before Pterodactyl lexicographically.
+	
     });
 
 
- 	// user signs-in with google account
 	$("#btn-googleSignIn").on("click", function()
 	{
-		//console.log("SIGN IN CLICKED");
-		// https://firebase.google.com/docs/reference/js/firebase.User
 		var tmp = googleSignIn();
-		//console.log("tmp:" + "\n" + tmp);
 	});
 
 
 	$("#btn-noSignIn").on("click", function()
 	{	
-		//console.log("NO GOOGLE CLICKED");
 		signInArea.hide();
 		trainSchedulerArea.show();
 		$("#userProfileArea").show();
