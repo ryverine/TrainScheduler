@@ -258,6 +258,7 @@ $(document).ready(function()
 		trainTableData.append(newTableRow);
 	}
 
+
 	/*** PAGE EVENTS ***/
 
     $("#btn-add").on("click", function() 
@@ -397,95 +398,156 @@ $(document).ready(function()
 	 });
 
 	 
-	 $("#btn-remove").on("click", function() 
-	 {
+	$("#btn-remove").on("click", function() 
+	{
 		event.preventDefault();
-		 console.log("REMOVE BUTTON CLICKED");
+		console.log("REMOVE BUTTON CLICKED");
 
-		/*
-https://firebase.google.com/docs/reference/js/firebase.database.DataSnapshot
+		if(selectedExistingTrain.key !== "")
+		{
+			trainName_input = $("#trainNameInput").val().trim();
+			trainDestination_input = $("#trainDestinationInput").val().trim();
+			firstTrainTimeHH_input = $("#trainInitalTimeHHInput").val().trim();
+			firstTrainTimeMM_input = $("#trainInitalTimeMMInput").val().trim();
+			trainFrequency_input = $("#trainFreqencyInput").val().trim();
 
-https://firebase.google.com/docs/reference/js/firebase.database.Reference.html#on
-child_removed event
+			var inputError = validateInput(trainName_input, trainDestination_input , firstTrainTimeHH_input, firstTrainTimeMM_input, trainFrequency_input);
 
-This event will be triggered once every time a child is removed. The DataSnapshot passed into the callback will be the old data for the child that was removed. A child will get removed when either:
+			if(inputError === "")
+			{
+				database.ref(selectedExistingTrain.key).remove();
 
-a client explicitly calls remove() on that child or one of its ancestors
+				$("#trainNameInput").val("");
+				$("#trainDestinationInput").val("");
+				$("#trainInitalTimeHHInput").val("");
+				$("#trainInitalTimeMMInput").val("");
+				$("#trainFreqencyInput").val("");
 
-a client calls set(null) on that child or one of its ancestors
+				selectedExistingTrain = {
+					key: "",
+					name: "",
+					frequency: "",
+					destination: "",
+					start: "",
+					updateBy_name: "",
+					updateBy_email: "",
+					updated: ""
+				}
 
-that child has all of its children removed
+			}
+			else
+			{
+				$("#submitErrorMessage").text(inputError);
+			}
+		}
+		{
+			$("#submitErrorMessage").text("You did not select a train to remove!");
+		}
 
-there is a query in effect which now filters out the child (because it's sort order changed or the max limit was hit)
+	});
 
 
+	$(document).on("click", "tr.trainData", function() 
+	{
+		var children = $(this).children();
 
-		 */
+		var selectedTrain_name = children[0].innerText;
+		var selectedTrain_dest = children[1].innerText;
+		var selectedTrain_freq = children[2].innerText;
 
+		var trainData = getExistingTrainData(selectedTrain_name, selectedTrain_dest, selectedTrain_freq);
 
+		if(trainData.key !== "")
+		{
+			selectedExistingTrain.key = trainData.key;
+			selectedExistingTrain.name = trainData.name;
+			selectedExistingTrain.frequency = trainData.frequency;
+			selectedExistingTrain.destination = trainData.destination;
+			selectedExistingTrain.start = trainData.start;
+			selectedExistingTrain.updateBy_name = trainData.updateBy_name;
+			selectedExistingTrain.updateBy_email = trainData.updateBy_email;
+			selectedExistingTrain.updated = trainData.updated;
 
+			$("#trainNameInput").val(trainData.name);
+			$("#trainDestinationInput").val(trainData.destination);
+			$("#trainFreqencyInput").val(trainData.frequency);
 
-	 });
+			var timeUnits = trainData.start.split(":");
 
-
-	 $(document).on("click", "tr.trainData", function() 
-	 {
-		 var children = $(this).children();
+			$("#trainInitalTimeHHInput").val(timeUnits[0]);
+			$("#trainInitalTimeMMInput").val(timeUnits[1]);
+		}
+	
+	});
  
-		 var selectedTrain_name = children[0].innerText;
-		 var selectedTrain_dest = children[1].innerText;
-		 var selectedTrain_freq = children[2].innerText;
  
-		 var trainData = getExistingTrainData(selectedTrain_name, selectedTrain_dest, selectedTrain_freq);
- 
-		 if(trainData.key !== "")
-		 {
-			 selectedExistingTrain.key = trainData.key;
-			 selectedExistingTrain.name = trainData.name;
-			 selectedExistingTrain.frequency = trainData.frequency;
-			 selectedExistingTrain.destination = trainData.destination;
-			 selectedExistingTrain.start = trainData.start;
-			 selectedExistingTrain.updateBy_name = trainData.updateBy_name;
-			 selectedExistingTrain.updateBy_email = trainData.updateBy_email;
-			 selectedExistingTrain.updated = trainData.updated;
- 
-			 $("#trainNameInput").val(trainData.name);
-			 $("#trainDestinationInput").val(trainData.destination);
-			 $("#trainFreqencyInput").val(trainData.frequency);
- 
-			 var timeUnits = trainData.start.split(":");
- 
-			 $("#trainInitalTimeHHInput").val(timeUnits[0]);
-			 $("#trainInitalTimeMMInput").val(timeUnits[1]);
-		 }
-	 
-	 });
- 
- 
-	 $("#btn-googleSignIn").on("click", function()
-	 {
-		 var tmp = googleSignIn();
-	 });
- 
- 
-	 $("#btn-noSignIn").on("click", function()
-	 {	
-		 signInArea.hide();
-		 trainSchedulerArea.show();
-		 $("#userProfileArea").show();
-		 updateUserInfo(defaultGoogleUser);
-	 });
- 
- 
-	 $("#btn-googleSignOut").on("click", function()
-	 {	
-		 googleSignOut();
-	 });
- 
+	$("#btn-googleSignIn").on("click", function()
+	{
+		var tmp = googleSignIn();
+	});
 
 
+	$("#btn-noSignIn").on("click", function()
+	{	
+		signInArea.hide();
+		trainSchedulerArea.show();
+		$("#userProfileArea").show();
+		updateUserInfo(defaultGoogleUser);
+	});
 
-	 /*** DATABASE LISTENERS */
+ 
+	$("#btn-googleSignOut").on("click", function()
+	{	
+		googleSignOut();
+	});
+
+
+	$("#btn-clear").on("click", function()
+	{	
+		$("#trainNameInput").val("");
+		$("#trainDestinationInput").val("");
+		$("#trainInitalTimeHHInput").val("");
+		$("#trainInitalTimeMMInput").val("");
+		$("#trainFreqencyInput").val("");
+
+		selectedExistingTrain = {
+			key: "",
+			name: "",
+			frequency: "",
+			destination: "",
+			start: "",
+			updateBy_name: "",
+			updateBy_email: "",
+			updated: ""
+		}
+	});
+
+	/*** DATABASE LISTENERS ***/
+	
+	database.ref().on("child_removed", function(childSnapshot) 
+	{
+		var tableRows = trainTableData.children();
+
+		for(var i = 0; i < tableRows.length; i++)
+		{
+			var rowData = $(tableRows[i]).children();
+
+    		var rowNameValue = rowData[0].innerText;
+    		var rowDestValue = rowData[1].innerText;
+			var rowFreqValue = rowData[2].innerText;
+			
+    		if (rowNameValue.toUpperCase() === childSnapshot.child("name").val().toUpperCase() &&
+    			rowDestValue.toUpperCase() === childSnapshot.child("destination").val().toUpperCase() &&
+    			rowFreqValue.toUpperCase() === childSnapshot.child("frequency").val().toUpperCase())
+    		{
+				$(tableRows[i]).remove();
+    		}
+		}
+
+	}, function(errorObject) {
+	console.log("Errors handled: " + errorObject.code);
+	});
+
 
 	database.ref().on("child_added", function(childSnapshot) 
 	{

@@ -37,7 +37,12 @@
 				<div class="row" >
 					<div id="header" class="col-12 jumbotron">
 						<p id="title">Train Scheduler</p>
-						<p id="subTitle">View current train schedules and edit train data.</p>
+						<p id="subTitle">
+							
+							View current train schedules and edit train data.
+
+	
+						</p>
 
 						<div class="row" id="userProfileArea">
 							<div class="col-3" class="userProfileArea_spacer"></div>
@@ -82,14 +87,20 @@
 				<div class="row">
 					<div id="inputArea" class="col-8">
 						<div class="card">
-							<div class="card-header">Add/Update Train</div>
+							<div class="card-header">Add/Update Train
+									<button id="btn-clear" class="btn btn-dark btn-submit">Clear Stored Data</button>
+							</div>
 							<div class="card-body">
 								<div id="appInstructions">
 									<p>To <strong>ADD a new train</strong> provide the needed information below and click the "Add New Train" button.</p>
 									
 									<p>To <strong>UPDATE an existing train</strong> click on the train in the table that you want to update and make your changes in the fields below. Click the "Update Existing Train" button to send the new information to the database.</p>
 									
-									<p>To <strong>CLONE an exisitng train</strong> follow the "update" instructions and use the "Add New Train" button instead of the "Update Existing Train" button. Note that you will not be able to submit if all data elements match an existing train.</p>
+									<p>To <strong>CLONE an exisitng train</strong> select a train from the table by clicking its row and use the "Add New Train" button instead of the "Update Existing Train" button. Note that you will not be able to submit if all data elements match an existing train.</p>
+
+									<p> To <strong>REMOVE an existing train</strong> select a train from the table by clicking its row and then click the "Remove Existing Train" button.</p>
+
+									<p>Use the <strong>Clear Stored Data</strong> button to remove any previously used train data.</p>
 								</div>
 								<form> 
 									<span class="inputLabel">Train Name: </span><br>
