@@ -177,26 +177,31 @@ ul{
 #trainName{
 	border: none;
 	vertical-align: text-top;
+	width: 20%;
 }
 
 #trainDestination{
 	border: none;
 	vertical-align: text-top;
+	width: 20%;
 }
 
 #trainFrequency{
 	border: none;
 	vertical-align: text-top;
+	width: 20%;
 }
 
 #trainArrival{
 	border: none;
 	vertical-align: text-top;
+	width: 20%;
 }
 
 #trainMinutes{
 	border: none;
 	vertical-align: text-top;
+	width: 20%;
 }
 
 #lastArea{
