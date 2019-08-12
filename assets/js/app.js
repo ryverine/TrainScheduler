@@ -510,6 +510,8 @@ $(document).ready(function()
 		$("#trainInitalTimeMMInput").val("");
 		$("#trainFreqencyInput").val("");
 
+		$("#submitErrorMessage").text("");
+
 		selectedExistingTrain = {
 			key: "",
 			name: "",
