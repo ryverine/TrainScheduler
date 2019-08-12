@@ -1,6 +1,6 @@
 # Train Scheduler 
 
-A train schedule application that incorporates Firebase to host arrival and departure data. 
+A train schedule application that incorporates Google's Firebase to host arrival and departure data. 
 
 App will retrieve and manipulate this information with Moment.js. 
 
@@ -11,7 +11,7 @@ Simulates a service that would be used to provide up-to-date information about v
  * HTML
  * CSS, CSS Reset, Bootstrap
  * JavaScript, jQuery, Moment JS
- * Firebase
+ * Firebase Realtime Database
  * Google Authentication
 
 ## Sign In
