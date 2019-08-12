@@ -28,7 +28,7 @@ If the user signs in with their Google account their profile picture, name, and 
 
 A Google account is not neccessary to access the site. The header will display dummy information where it would otherwise show Google account info.
 
-![Google Sign-In](/documentation/no_google_signin.gif)
+![No Google Sign-In](/documentation/no_google_signin.gif)
 
 ## Current Train Schedule
 
@@ -42,15 +42,21 @@ This section allows the user to interact with train data.
 
 Enter values for `Train Name`, `Destination`,  `First Train Time`, and train arrival `Freqency`, then add the train to the schedule by clicking the `Add New Train` button.
 
+![Add Train](/documentation/add_train.gif)
+
 ### Update Train
 
 Click on the row of a train in the table that you want to update. This will add the train's data to the input fileds and the `selectedExistingTrain` object. Make your changes in the input fields, then click the `Update Existing Train` button to send the new information to the database.
+
+![Update Train](/documentation/update_train.gif)
 
 ### Remove Train From Schedule
 
 Click on the row of a train in the table that you want to remove, then click the "Remove Existing Train" button.
 
 Use the `Clear Stored Data` button to ensure that train's data is removed from the `selectedExistingTrain` object.
+
+![Remove Train](/documentation/remove_train.gif)
 
 ### Clone Train
 
