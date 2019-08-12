@@ -9,7 +9,7 @@ Simulates a service that would be used to provide up-to-date information about v
 ## Technologies
 
  * HTML
- * CSS, Bootstrap
+ * CSS, CSS Reset, Bootstrap
  * JavaScript, jQuery, Moment JS
  * Firebase
  * Google Authentication
