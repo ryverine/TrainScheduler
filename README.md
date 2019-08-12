@@ -10,7 +10,7 @@ For the combat calulations I have used D&D 5e as a basic guideline.
 
 ## Technologies
 
- * HTML
+ * HTML-
  * CSS
  * JavaScript
  * jQuery
