@@ -30,3 +30,36 @@ A Google account is not neccessary to access the site. The header will display d
 
 ![Google Sign-In](/documentation/no_google_signin.gif)
 
+## Current Train Schedule
+
+Train data is stored in Firebase to maintain data persistnce. You can see all current trains, the `Destination` of each train, the `Frequency` of the train's route, the expected `Next Arrival` of the train, and the amount of time it will take for the train to arrive via `Minutes Away`.
+
+## Add/Update Train
+
+This section allows the user to interact with train data. 
+
+### Add A New Train
+
+Enter values for `Train Name`, `Destination`,  `First Train Time`, and train arrival `Freqency`, then add the train to the schedule by clicking the `Add New Train` button.
+
+### Update Train
+
+Click on the row of a train in the table that you want to update. This will add the train's data to the input fileds and the `selectedExistingTrain` object. Make your changes in the input fields, then click the `Update Existing Train` button to send the new information to the database.
+
+### Remove Train From Schedule
+
+Click on the row of a train in the table that you want to remove, then click the "Remove Existing Train" button.
+
+Use the `Clear Stored Data` button to ensure that train's data is removed from the `selectedExistingTrain` object.
+
+### Clone Train
+
+This is not defined functionality, but you can select an exisitng train, make changes to its data, and then use `Add New Train` button.
+
+### Clear Stored Data
+
+You may forget what train you have recently selected, so the `Cleared Stored Data` button allows to reset the `selectedExistingTrain` object to reduce unintented changes to train data.
+
+## Last Train Added
+
+This displays the information on the last train whose data was modified in some way, either via `Add New Train` or `Update Existing Train`.
