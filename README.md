@@ -1,12 +1,15 @@
+
+[My Portfolio Site](https://ryverine.github.io/)
+
 # Train Scheduler 
+
+[Deployed App](https://ryverine.github.io/TrainScheduler)
 
 A train schedule application that incorporates Google's Firebase to host arrival and departure data. 
 
 App will retrieve and manipulate this information with Moment.js. 
 
 Simulates a service that would be used to provide up-to-date information about various trains, namely their arrival times and how many minutes remain until they arrive at their station.
-
-[Deployed App](https://ryverine.github.io/TrainScheduler)
 
 ## Technologies
 
